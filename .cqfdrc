@@ -3,7 +3,6 @@ org='anakin4747'
 name='anakins-cscope'
 
 [build]
-command=""
-docker_run_args=""
+command="bash"
 
 # vi: ft=ini
