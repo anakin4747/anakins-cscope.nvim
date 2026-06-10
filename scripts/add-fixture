@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+: "${FIXTURES_DIR:=tests/fixtures/default}"
+: "${LINUX_SRC:=${HOME}/src/linux}"
+
+die() {
+    printf "\033[31merror: %s\033[0m\n" "$1" >&2
+    exit 1
+}
+
+log() {
+    printf "\033[32m%s\033[0m\n" "$1"
+}
+
+if [ $# -ne 1 ]; then
+    printf "usage: %s <path-to-file>\n" "$(basename "$0")" >&2
+    printf "  e.g. %s ~/src/linux/arch/arm/kernel/setup.c\n" "$(basename "$0")" >&2
+    exit 1
+fi
+
+src_file="$1"
+
+case "$src_file" in
+    "$LINUX_SRC/"*) ;;
+    /*) die "source file must be under ${LINUX_SRC}" ;;
+    *)
+        src_file="${LINUX_SRC}/${src_file}"
+        ;;
+esac
+
+if [ ! -f "$src_file" ]; then
+    die "source file does not exist: ${src_file}"
+fi
+
+rel_path="${src_file#"${LINUX_SRC}"/}"
+dest="${FIXTURES_DIR}/${rel_path}"
+dest_dir="$(dirname "$dest")"
+
+log "checking fixture directory"
+if ! git diff --quiet HEAD -- "${FIXTURES_DIR}"; then
+    die "fixtures directory has uncommitted tracked changes"
+fi
+
+if [ -n "$(git ls-files --others --exclude-standard "${FIXTURES_DIR}")" ]; then
+    die "fixtures directory has untracked files"
+fi
+log "fixture directory ok"
+
+while :; do
+    printf "reason: "
+    if ! read -r reason; then
+        die "cancelled"
+    fi
+    if [ -n "$reason" ]; then
+        break
+    fi
+done
+
+log "copying ${rel_path}"
+if ! mkdir -p "$dest_dir"; then
+    die "failed to create directory: ${dest_dir}"
+fi
+
+if ! cp "$src_file" "$dest"; then
+    die "failed to copy: ${src_file} -> ${dest}"
+fi
+log "copied ${rel_path}"
+
+(
+    if ! cd "${FIXTURES_DIR}"; then
+        die "failed to cd to ${FIXTURES_DIR}"
+    fi
+
+    log "rebuilding cscope database"
+    if ! cscope -bqkvR; then
+        die "cscope database rebuild failed"
+    fi
+    log "cscope database rebuilt"
+)
+
+log "committing fixture"
+if ! git add "${FIXTURES_DIR}"; then
+    die "git add failed"
+fi
+
+if ! git commit -m "test: add fixture ${rel_path}
+
+${reason}"; then
+    die "git commit failed"
+fi
+
+printf "done: added %s\n" "${rel_path}"
