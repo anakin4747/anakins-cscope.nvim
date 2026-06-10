@@ -1,8 +1,31 @@
-local describe = require("plenary.busted").describe
-local it = require("plenary.busted").it
 
-describe("anakins-cscope", function()
-    it("loads without errors", function()
-        assert.is_true(true)
+local cs = require("anakins-cscope")
+
+cs.cwd = 'tests/fixtures/default/'
+
+describe("anakins-cscope.goto_definition", function()
+    it("can be called without errors", function()
+        assert.has_no.errors(function()
+            cs.goto_definition()
+        end)
+    end)
+
+    it("accepts a symbol as an argument", function()
+        assert.has_no.errors(function()
+            cs.goto_definition('regmap_reg_range')
+        end)
+    end)
+
+    logs_and_it("opens include/linux/regmap.h when passed regmap_reg_range", function()
+        cs.goto_definition('regmap_reg_range')
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("include/linux/regmap.h", name)
+    end)
+
+    it("goes to include/linux/regmap.h:234 when passed regmap_reg_range", function()
+        cs.goto_definition('regmap_reg_range')
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        assert.equal(234, row, "wrong row")
+        assert.equal(9, col, "wrong column")
     end)
 end)
