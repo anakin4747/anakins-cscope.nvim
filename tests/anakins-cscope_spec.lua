@@ -3,6 +3,12 @@ local cs = require("anakins-cscope")
 
 cs.cwd = 'tests/fixtures/default/'
 
+local function logs_and_it(text, fn)
+    cs.logfile = "tests/logs/" .. string.gsub(text, "[%s/]", "-") .. ".log"
+    cs.should_log = true
+    it(text, fn)
+end
+
 describe("anakins-cscope.goto_definition", function()
     it("can be called without errors", function()
         assert.has_no.errors(function()
