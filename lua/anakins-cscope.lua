@@ -52,9 +52,9 @@ M._show_telescope_picker = function(results)
             entry_maker = function(entry)
                 return {
                     value = entry,
-                    display = entry.filepath .. ":" .. entry.row,
+                    display = entry.filepath .. ":" .. entry.row .. ": " .. (entry.content or ""),
                     ordinal = entry.filepath .. ":" .. entry.row,
-                    filename = entry.filepath,
+                    filename = M.cwd .. entry.filepath,
                     lnum = entry.row,
                 }
             end,
@@ -63,7 +63,7 @@ M._show_telescope_picker = function(results)
             actions.select_default:replace(function()
                 local selection = action_state.get_selected_entry()
                 actions.close(prompt_bufnr)
-                vim.cmd.edit(M.cwd .. selection.filename)
+                vim.cmd.edit(selection.filename)
                 vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
             end)
             return true
