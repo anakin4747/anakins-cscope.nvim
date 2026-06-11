@@ -19,6 +19,58 @@ local function log_var(name, var)
     log(name .. ": '" .. vim.inspect(var) .. "'")
 end
 
+M.parse_results = function(stdout)
+    if not stdout or stdout == "" then return {} end
+    local results = {}
+    for line in stdout:gmatch("[^\r\n]+") do
+        local filepath, _, row, content = string.match(line, "(%S+) (%S+) (%S+) (.*)")
+        if filepath and row then
+            table.insert(results, {
+                filepath = filepath,
+                row = tonumber(row),
+                content = content or "",
+            })
+        end
+    end
+    return results
+end
+
+M._jump_to_result = function(result)
+    vim.cmd.edit(M.cwd .. result.filepath)
+    local column = string.find(result.content, M._symbol) - 1
+    vim.api.nvim_win_set_cursor(0, { result.row, column })
+end
+
+M._show_telescope_picker = function(results)
+    local actions = require("telescope.actions")
+    local action_state = require("telescope.actions.state")
+
+    require("telescope.pickers").new({}, {
+        prompt_title = M._symbol,
+        finder = require("telescope.finders").new_table {
+            results = results,
+            entry_maker = function(entry)
+                return {
+                    value = entry,
+                    display = entry.filepath .. ":" .. entry.row,
+                    ordinal = entry.filepath .. ":" .. entry.row,
+                    filename = entry.filepath,
+                    lnum = entry.row,
+                }
+            end,
+        },
+        attach_mappings = function(prompt_bufnr, _map)
+            actions.select_default:replace(function()
+                local selection = action_state.get_selected_entry()
+                actions.close(prompt_bufnr)
+                vim.cmd.edit(M.cwd .. selection.filename)
+                vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
+            end)
+            return true
+        end,
+    }):find()
+end
+
 M.goto_definition = function(symbol)
     M._symbol = symbol or vim.fn.expand("<cword>")
     local opts = { text = true, cwd = M.cwd }
@@ -32,28 +84,22 @@ M.goto_definition = function(symbol)
             log_var("result", result)
             log_var("M._symbol", M._symbol)
 
-            local filepath, _, row, content =
-                string.match(result.stdout, "(%S+) (%S+) (%S+) (.*)")
+            local results = M.parse_results(result.stdout)
+            if #results == 0 then return end
 
-            if not (filepath and row and content) then return end
-
-            log_var("filepath", filepath)
-            log_var("row", row)
-            log_var("content", content)
-
-            vim.cmd.edit(M.cwd .. filepath)
-
-            local column = string.find(content, M._symbol) - 1
-
-            log_var("column", column)
-
-            vim.api.nvim_win_set_cursor(0, { tonumber(row), tonumber(column) })
+            if #results == 1 then
+                M._jump_to_result(results[1])
+            else
+                M._show_telescope_picker(results)
+            end
         end)
     end)
 end
 
-M.cwd = 'tests/fixtures/default/'
-M.goto_definition('regmap_reg_range')
+M.should_log = true
+M.cwd = "./tests/fixtures/default/"
+M.goto_definition("setup_arch")
+
 
 -- Find this C symbol:              <-- Field 0
 -- Find this global definition:     <-- Field 1
