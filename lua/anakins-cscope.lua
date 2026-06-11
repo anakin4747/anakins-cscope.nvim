@@ -20,7 +20,7 @@ local function log_var(name, var)
 end
 
 M.goto_definition = function(symbol)
-    M._symbol = symbol
+    M._symbol = symbol or vim.fn.expand("<cword>")
     local opts = { text = true, cwd = M.cwd }
 
     local cmd = { "cscope", "-d", "-L", "-1", M._symbol }
