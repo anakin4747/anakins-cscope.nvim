@@ -15,6 +15,7 @@ local function log(message)
 end
 
 local function log_var(name, var)
+    if not M.should_log then return end
     log(name .. ": '" .. vim.inspect(var) .. "'")
 end
 
