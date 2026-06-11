@@ -29,7 +29,7 @@ M.goto_definition = function(symbol)
         vim.schedule(function()
             log_var("cmd", cmd)
             log_var("opts", opts)
-            log_var("stdout", result.stdout)
+            log_var("result", result)
             log_var("M._symbol", M._symbol)
 
             local filepath, _, row, content =
