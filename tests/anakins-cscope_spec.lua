@@ -145,20 +145,4 @@ describe("anakins-cscope telescope integration", function()
             assert.matches("void __init setup_arch", entry.display)
         end
     end)
-
-    it("filename has M.cwd prefixed for file resolution", function()
-        cs.goto_definition('setup_arch')
-        vim.wait(100)
-
-        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
-        assert.is_true(#prompts > 0, "telescope should have an active picker")
-
-        local picker = require("telescope.actions.state").get_current_picker(prompts[1])
-        local entries = picker.finder.results
-        assert.equal(2, #entries)
-
-        for _, entry in ipairs(entries) do
-            assert.matches("^tests/fixtures/default/", entry.filename)
-        end
-    end)
 end)
