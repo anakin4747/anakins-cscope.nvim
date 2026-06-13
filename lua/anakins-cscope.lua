@@ -53,6 +53,7 @@ local function show_telescope_picker(results)
                     ordinal = entry.filepath .. ":" .. entry.row,
                     filename = M.cwd .. entry.filepath,
                     lnum = entry.row,
+                    col = (string.find(entry.content, _symbol) or 1) - 1,
                 }
             end,
         },

@@ -141,4 +141,21 @@ describe("anakins-cscope telescope integration", function()
         end
     end)
 
+    it("selecting a telescope entry jumps to the correct file, row, and column", function()
+        cs.goto_definition('setup_arch')
+        vim.wait(100)
+
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        assert.is_true(#prompts > 0, "telescope should have an active picker")
+
+        require("telescope.actions").select_default(prompts[1])
+        vim.wait(100)
+
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("arch/arm/kernel/setup.c", name)
+
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        assert.equal(1096, row)
+        assert.equal(12, col)
+    end)
 end)
