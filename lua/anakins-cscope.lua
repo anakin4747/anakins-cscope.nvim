@@ -4,7 +4,7 @@ local M = {}
 ---@type vim.SystemObj
 M.systemobj = nil
 M.cwd = nil
-M._symbol = nil
+local _symbol
 
 M.logfile = "anakins-cscope.nvim.log"
 M.should_log = false
@@ -35,15 +35,15 @@ M.parse_results = function(stdout)
     return results
 end
 
-M._jump_to_result = function(result)
+local function jump_to_result(result)
     vim.cmd.edit(M.cwd .. result.filepath)
-    local column = string.find(result.content, M._symbol) - 1
+    local column = string.find(result.content, _symbol) - 1
     vim.api.nvim_win_set_cursor(0, { result.row, column })
 end
 
-M._show_telescope_picker = function(results)
+local function show_telescope_picker(results)
     require("telescope.pickers").new({}, {
-        prompt_title = M._symbol,
+        prompt_title = _symbol,
         finder = require("telescope.finders").new_table {
             results = results,
             entry_maker = function(entry)
@@ -60,25 +60,25 @@ M._show_telescope_picker = function(results)
 end
 
 M.goto_definition = function(symbol)
-    M._symbol = symbol or vim.fn.expand("<cword>")
+    _symbol = symbol or vim.fn.expand("<cword>")
     local opts = { text = true, cwd = M.cwd }
 
-    local cmd = { "cscope", "-d", "-L", "-1", M._symbol }
+    local cmd = { "cscope", "-d", "-L", "-1", _symbol }
 
     vim.system(cmd, opts, function(result)
         vim.schedule(function()
             log_var("cmd", cmd)
             log_var("opts", opts)
             log_var("result", result)
-            log_var("M._symbol", M._symbol)
+            log_var("symbol", _symbol)
 
             local results = M.parse_results(result.stdout)
             if #results == 0 then return end
 
             if #results == 1 then
-                M._jump_to_result(results[1])
+                jump_to_result(results[1])
             else
-                M._show_telescope_picker(results)
+                show_telescope_picker(results)
             end
         end)
     end)

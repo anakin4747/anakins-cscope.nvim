@@ -101,25 +101,20 @@ end)
 
 describe("anakins-cscope telescope integration", function()
     it("opens telescope picker with 2 results for setup_arch", function()
-        local captured_results
-        local orig_show = cs._show_telescope_picker
-        cs._show_telescope_picker = function(results)
-            captured_results = results
-            orig_show(results)
-        end
-
         cs.goto_definition('setup_arch')
         vim.wait(100)
 
-        assert.is_not_nil(captured_results)
-        assert.equal(2, #captured_results)
-        assert.matches("arch/arm/kernel/setup.c", captured_results[1].filepath)
-        assert.matches("arch/x86/kernel/setup.c", captured_results[2].filepath)
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        assert.is_true(#prompts > 0, "telescope should have an active picker")
 
-        cs._show_telescope_picker = orig_show
+        local picker = require("telescope.actions.state").get_current_picker(prompts[1])
+        local entries = picker.finder.results
+        assert.equal(2, #entries)
+        assert.matches("arch/arm/kernel/setup.c", entries[1].value.filepath)
+        assert.matches("arch/x86/kernel/setup.c", entries[2].value.filepath)
     end)
 
-    it("still jumps directly for single-result symbols", function()
+    it("jumps directly for single-result symbols", function()
         cs.goto_definition('regmap_reg_range')
         vim.wait(100)
 
@@ -145,4 +140,5 @@ describe("anakins-cscope telescope integration", function()
             assert.matches("void __init setup_arch", entry.display)
         end
     end)
+
 end)
