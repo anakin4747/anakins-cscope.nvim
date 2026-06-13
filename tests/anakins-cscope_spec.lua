@@ -132,9 +132,8 @@ describe("anakins-cscope telescope integration", function()
         local entries = picker.finder.results
         assert.equal(2, #entries)
 
-        for _, entry in ipairs(entries) do
-            assert.matches("void __init setup_arch", entry.display)
-        end
+        assert.matches("void __init setup_arch", entries[1].display)
+        assert.matches("void __init setup_arch", entries[2].display)
     end)
 
     it("selecting a telescope entry jumps to the correct file, row, and column", function()
