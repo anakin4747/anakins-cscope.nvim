@@ -44,7 +44,7 @@ end
 local function show_telescope_picker(results)
     require("telescope.pickers").new({}, {
         prompt_title = _symbol,
-        finder = require("telescope.finders").new_table {
+        finder = require("telescope.finders").new_table({
             results = results,
             entry_maker = function(entry)
                 return {
@@ -56,7 +56,7 @@ local function show_telescope_picker(results)
                     col = (string.find(entry.content, _symbol) or 1) - 1,
                 }
             end,
-        },
+        }),
     }):find()
 end
 
