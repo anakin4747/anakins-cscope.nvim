@@ -109,7 +109,7 @@ describe("anakins-cscope telescope integration", function()
         end
 
         cs.goto_definition('setup_arch')
-        vim.wait(500)
+        vim.wait(100)
 
         assert.is_not_nil(captured_results)
         assert.equal(2, #captured_results)
@@ -121,7 +121,7 @@ describe("anakins-cscope telescope integration", function()
 
     it("still jumps directly for single-result symbols", function()
         cs.goto_definition('regmap_reg_range')
-        vim.wait(500)
+        vim.wait(100)
 
         local prompts = require("telescope.state").get_existing_prompt_bufnrs()
         assert.equal(0, #prompts, "telescope should not open for single-result")
@@ -132,7 +132,7 @@ describe("anakins-cscope telescope integration", function()
 
     it("display includes code line content for each result", function()
         cs.goto_definition('setup_arch')
-        vim.wait(500)
+        vim.wait(100)
 
         local prompts = require("telescope.state").get_existing_prompt_bufnrs()
         assert.is_true(#prompts > 0, "telescope should have an active picker")
@@ -148,7 +148,7 @@ describe("anakins-cscope telescope integration", function()
 
     it("filename has M.cwd prefixed for file resolution", function()
         cs.goto_definition('setup_arch')
-        vim.wait(500)
+        vim.wait(100)
 
         local prompts = require("telescope.state").get_existing_prompt_bufnrs()
         assert.is_true(#prompts > 0, "telescope should have an active picker")
