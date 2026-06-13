@@ -42,9 +42,6 @@ M._jump_to_result = function(result)
 end
 
 M._show_telescope_picker = function(results)
-    local actions = require("telescope.actions")
-    local action_state = require("telescope.actions.state")
-
     require("telescope.pickers").new({}, {
         prompt_title = M._symbol,
         finder = require("telescope.finders").new_table {
@@ -59,15 +56,6 @@ M._show_telescope_picker = function(results)
                 }
             end,
         },
-        attach_mappings = function(prompt_bufnr, _map)
-            actions.select_default:replace(function()
-                local selection = action_state.get_selected_entry()
-                actions.close(prompt_bufnr)
-                vim.cmd.edit(selection.filename)
-                vim.api.nvim_win_set_cursor(0, { selection.lnum, 0 })
-            end)
-            return true
-        end,
     }):find()
 end
 
