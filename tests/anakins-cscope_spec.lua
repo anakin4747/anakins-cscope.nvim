@@ -55,10 +55,6 @@ describe("anakins-cscope.goto_definition", function()
         assert.equal(234, row, "wrong row")
         assert.equal(8, col, "wrong column")
     end)
-
-    -- _it("cancels the previous vim.system command if called again", function()
-    --
-    -- end)
 end)
 
 describe("anakins-cscope.parse_results", function()
