@@ -284,53 +284,7 @@ describe("anakins-cscope.goto_definition", function()
         assert.equal(234, row, "wrong row")
         assert.equal(9, col, "wrong column")
     end)
-end)
 
-describe("anakins-cscope.parse_results", function()
-    _it("returns empty list for empty stdout", function()
-        local results = cs.parse_results("")
-        assert.are.same({}, results)
-    end)
-
-    _it("returns empty list for nil stdout", function()
-        local results = cs.parse_results(nil)
-        assert.are.same({}, results)
-    end)
-
-    _it("parses single result from cscope stdout", function()
-        cs.symbol = 'regmap_reg_range'
-        local stdout = "include/linux/regmap.h regmap_reg_range 234 #define regmap_reg_range(low, high) { .range_min = low, .range_max = high, }\n"
-        local results = cs.parse_results(stdout)
-        assert.equal(1, #results)
-        assert.equal("include/linux/regmap.h", results[1].filepath)
-        assert.equal(234, results[1].row)
-        assert.equal(9, results[1].column)
-        assert.matches("regmap_reg_range", results[1].content)
-    end)
-
-    _it("parses multiple results for setup_arch", function()
-        cs.symbol = 'setup_arch'
-        local stdout = "arch/arm/kernel/setup.c setup_arch 1096 void __init setup_arch(char **cmdline_p)\narch/x86/kernel/setup.c setup_arch 884 void __init setup_arch(char **cmdline_p)\n"
-        local results = cs.parse_results(stdout)
-        assert.equal(2, #results)
-        assert.equal("arch/arm/kernel/setup.c", results[1].filepath)
-        assert.equal(1096, results[1].row)
-        assert.equal(13, results[1].column)
-        assert.equal("arch/x86/kernel/setup.c", results[2].filepath)
-        assert.equal(884, results[2].row)
-        assert.equal(13, results[2].column)
-    end)
-
-    _it("skips lines that don't match the pattern", function()
-        cs.symbol = 'regmap_reg_range'
-        local stdout = "short\ninclude/linux/regmap.h regmap_reg_range 234 #define regmap_reg_range(low, high) { .range_min = low, .range_max = high, }\n"
-        local results = cs.parse_results(stdout)
-        assert.equal(1, #results)
-        assert.equal("include/linux/regmap.h", results[1].filepath)
-    end)
-end)
-
-describe("anakins-cscope telescope integration", function()
     _it("opens telescope picker with 2 results for setup_arch", function()
         cs.goto_definition('setup_arch')
         vim.wait(100)
@@ -421,3 +375,48 @@ describe("anakins-cscope telescope integration", function()
             "previewer window should be present and have a valid window")
     end)
 end)
+
+describe("anakins-cscope.parse_results", function()
+    _it("returns empty list for empty stdout", function()
+        local results = cs.parse_results("")
+        assert.are.same({}, results)
+    end)
+
+    _it("returns empty list for nil stdout", function()
+        local results = cs.parse_results(nil)
+        assert.are.same({}, results)
+    end)
+
+    _it("parses single result from cscope stdout", function()
+        cs.symbol = 'regmap_reg_range'
+        local stdout = "include/linux/regmap.h regmap_reg_range 234 #define regmap_reg_range(low, high) { .range_min = low, .range_max = high, }\n"
+        local results = cs.parse_results(stdout)
+        assert.equal(1, #results)
+        assert.equal("include/linux/regmap.h", results[1].filepath)
+        assert.equal(234, results[1].row)
+        assert.equal(9, results[1].column)
+        assert.matches("regmap_reg_range", results[1].content)
+    end)
+
+    _it("parses multiple results for setup_arch", function()
+        cs.symbol = 'setup_arch'
+        local stdout = "arch/arm/kernel/setup.c setup_arch 1096 void __init setup_arch(char **cmdline_p)\narch/x86/kernel/setup.c setup_arch 884 void __init setup_arch(char **cmdline_p)\n"
+        local results = cs.parse_results(stdout)
+        assert.equal(2, #results)
+        assert.equal("arch/arm/kernel/setup.c", results[1].filepath)
+        assert.equal(1096, results[1].row)
+        assert.equal(13, results[1].column)
+        assert.equal("arch/x86/kernel/setup.c", results[2].filepath)
+        assert.equal(884, results[2].row)
+        assert.equal(13, results[2].column)
+    end)
+
+    _it("skips lines that don't match the pattern", function()
+        cs.symbol = 'regmap_reg_range'
+        local stdout = "short\ninclude/linux/regmap.h regmap_reg_range 234 #define regmap_reg_range(low, high) { .range_min = low, .range_max = high, }\n"
+        local results = cs.parse_results(stdout)
+        assert.equal(1, #results)
+        assert.equal("include/linux/regmap.h", results[1].filepath)
+    end)
+end)
+
