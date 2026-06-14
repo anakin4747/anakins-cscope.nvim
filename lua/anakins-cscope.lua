@@ -108,6 +108,9 @@ M.goto_definition = function(symbol)
     end)
 end
 
+M.goto_incoming_calls = function()
+end
+
 M.should_log = true
 M.cwd = "./tests/fixtures/default/"
 M.goto_definition("setup_arch")

@@ -9,6 +9,14 @@ local function _it(text, fn)
     it(text, fn)
 end
 
+describe("anakins-cscope.goto_incoming_calls", function()
+    _it("can be called without errors", function()
+        assert.has_no.errors(function()
+            cs.goto_incoming_calls()
+        end)
+    end)
+end)
+
 describe("anakins-cscope.goto_definition", function()
     _it("can be called without errors", function()
         assert.has_no.errors(function()
