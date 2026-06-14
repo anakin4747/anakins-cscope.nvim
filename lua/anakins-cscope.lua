@@ -1,8 +1,6 @@
 
 local M = {}
 
----@type vim.SystemObj
-M.systemobj = nil
 M.cwd = nil
 local _symbol
 
