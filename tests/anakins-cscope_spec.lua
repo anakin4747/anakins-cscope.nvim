@@ -48,6 +48,17 @@ describe("anakins-cscope.goto_incoming_calls", function()
         assert.equal(2, #entries)
     end)
 
+    _it("does nothing for start_kernel which has no callers", function()
+        local before = #require("telescope.state").get_existing_prompt_bufnrs()
+        cs.goto_incoming_calls('start_kernel')
+        vim.wait(100)
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.equal("", name, "should not open any file")
+
+        local after = #require("telescope.state").get_existing_prompt_bufnrs()
+        assert.equal(before, after, "telescope count should not change")
+    end)
+
     _it("selecting first do_one_initcall entry lands on init/main.c:1444", function()
         cs.goto_incoming_calls('do_one_initcall')
         vim.wait(100)
