@@ -108,7 +108,7 @@ M.goto_definition = function(symbol)
     end)
 end
 
-M.goto_incoming_calls = function()
+M.goto_incoming_calls = function(symbol)
 end
 
 M.should_log = true

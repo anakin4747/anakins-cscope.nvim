@@ -15,6 +15,12 @@ describe("anakins-cscope.goto_incoming_calls", function()
             cs.goto_incoming_calls()
         end)
     end)
+
+    _it("accepts a symbol as an argument", function()
+        assert.has_no.errors(function()
+            cs.goto_incoming_calls('rest_init')
+        end)
+    end)
 end)
 
 describe("anakins-cscope.goto_definition", function()
