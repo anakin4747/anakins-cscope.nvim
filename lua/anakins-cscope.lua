@@ -73,7 +73,7 @@ local function show_telescope_picker(results)
                     ordinal = entry.filepath .. ":" .. entry.row,
                     filename = M.cwd .. entry.filepath,
                     lnum = entry.row,
-                    col = entry.col
+                    col = entry.column
                 }
             end,
         }),
