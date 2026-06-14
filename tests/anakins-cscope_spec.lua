@@ -21,6 +21,13 @@ describe("anakins-cscope.goto_incoming_calls", function()
             cs.goto_incoming_calls('rest_init')
         end)
     end)
+
+    _it("opens init/main.c when passed rest_init", function()
+        cs.goto_incoming_calls('rest_init')
+        vim.wait(100)
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("init/main.c", name)
+    end)
 end)
 
 describe("anakins-cscope.goto_definition", function()

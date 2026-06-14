@@ -108,6 +108,24 @@ M.goto_definition = function(symbol)
 end
 
 M.goto_incoming_calls = function(symbol)
+    M.symbol = symbol or vim.fn.expand("<cword>")
+    local opts = { text = true, cwd = M.cwd }
+
+    local cmd = { "cscope", "-d", "-L", "-3", M.symbol }
+
+    vim.system(cmd, opts, function(result)
+        vim.schedule(function()
+            log_var("cmd", cmd)
+            log_var("opts", opts)
+            log_var("result", result)
+            log_var("symbol", M.symbol)
+
+            local results = M.parse_results(result.stdout)
+            if #results ~= 1 then return end
+
+            jump_to_result(results[1])
+        end)
+    end)
 end
 
 M.should_log = true
