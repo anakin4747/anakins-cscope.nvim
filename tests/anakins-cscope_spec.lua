@@ -177,4 +177,15 @@ describe("anakins-cscope telescope integration", function()
         assert.equal(884, row)
         assert.equal(13, col)
     end)
+
+    _it("telescope picker shows a previewer window for multi-result queries", function()
+        vim.o.columns = 200
+        cs.goto_definition('setup_arch')
+        vim.wait(100)
+
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        local picker = require("telescope.actions.state").get_current_picker(prompts[1])
+        assert.is_true(vim.api.nvim_win_is_valid(picker.preview_win),
+            "previewer window should be present and have a valid window")
+    end)
 end)

@@ -64,6 +64,7 @@ end
 local function show_telescope_picker(results)
     require("telescope.pickers").new({}, {
         prompt_title = _symbol,
+        previewer = require("telescope.previewers").vim_buffer_qflist.new({}),
         finder = require("telescope.finders").new_table({
             results = results,
             entry_maker = function(entry)
