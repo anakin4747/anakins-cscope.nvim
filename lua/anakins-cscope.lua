@@ -121,9 +121,13 @@ M.goto_incoming_calls = function(symbol)
             log_var("symbol", M.symbol)
 
             local results = M.parse_results(result.stdout)
-            if #results ~= 1 then return end
+            if #results == 0 then return end
 
-            jump_to_result(results[1])
+            if #results == 1 then
+                jump_to_result(results[1])
+            else
+                show_telescope_picker(results)
+            end
         end)
     end)
 end

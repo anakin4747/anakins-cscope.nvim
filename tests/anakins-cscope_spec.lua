@@ -37,6 +37,17 @@ describe("anakins-cscope.goto_incoming_calls", function()
         assert.equal(1, col, "wrong column")
     end)
 
+    _it("opens telescope picker with 2 results for do_one_initcall", function()
+        cs.goto_incoming_calls('do_one_initcall')
+        vim.wait(100)
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        assert.is_true(#prompts > 0, "telescope should have an active picker")
+
+        local picker = require("telescope.actions.state").get_current_picker(prompts[1])
+        local entries = picker.finder.results
+        assert.equal(2, #entries)
+    end)
+
     _it("jumps from cursor on rest_init definition", function()
         vim.cmd.edit(cs.cwd .. "init/main.c")
         vim.api.nvim_win_set_cursor(0, { 714, 38 })
