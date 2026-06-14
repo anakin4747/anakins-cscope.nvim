@@ -135,8 +135,4 @@ M.goto_outgoing_calls = function(symbol)
     jump_or_list_cscope(fields.outgoing_calls, symbol)
 end
 
-M.should_log = true
-M.cwd = "./tests/fixtures/default/"
-M.goto_definition("setup_arch")
-
 return M
