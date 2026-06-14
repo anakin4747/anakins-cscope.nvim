@@ -62,10 +62,14 @@ local function jump_to_result(result)
 end
 
 local function show_telescope_picker(results)
-    require("telescope.pickers").new({}, {
+    local pickers = require("telescope.pickers")
+    local previewers = require("telescope.previewers")
+    local finders = require("telescope.finders")
+
+    pickers.new({}, {
         prompt_title = _symbol,
-        previewer = require("telescope.previewers").vim_buffer_qflist.new({}),
-        finder = require("telescope.finders").new_table({
+        previewer = previewers.vim_buffer_qflist.new({}),
+        finder = finders.new_table({
             results = results,
             entry_maker = function(entry)
                 return {
