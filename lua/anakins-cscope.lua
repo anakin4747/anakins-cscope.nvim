@@ -117,10 +117,10 @@ M.goto_definition("setup_arch")
 
 -- Find this C symbol:              <-- Field 0
 -- Find this global definition:     <-- Field 1
--- Find functions called by this:   <-- Field 2
--- Find functions calling this:     <-- Field 3
+-- Find functions called by this:   <-- Field 2 outgoing
+-- Find functions calling this:     <-- Field 3 incomming
 -- Find this text string:           <-- Field 4
--- Change this text string:         <-- Field 5
+-- Change this text string:         <-- Field 5 rename
 -- Find this egrep pattern:         <-- Field 6
 -- Find this file:                  <-- Field 7
 -- Find files #including this file: <-- Field 8
