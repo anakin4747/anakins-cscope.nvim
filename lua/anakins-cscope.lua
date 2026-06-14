@@ -23,22 +23,42 @@ M.parse_results = function(stdout)
     if not stdout or stdout == "" then return {} end
     local results = {}
     for line in stdout:gmatch("[^\r\n]+") do
-        local filepath, _, row, content = string.match(line, "(%S+) (%S+) (%S+) (.*)")
-        if filepath and row then
-            table.insert(results, {
-                filepath = filepath,
-                row = tonumber(row),
-                content = content or "",
-            })
+        log_var("line", line)
+
+        local filepath, symbol, row, content =
+            string.match(line, "(%S+) (%S+) (%S+) (.*)")
+
+        log_var("filepath", filepath)
+        log_var("symbol", symbol)
+        log_var("row", tonumber(row))
+        log_var("content", content)
+
+        if not (filepath and symbol and row and content) then
+            goto continue
         end
+
+        local column = string.find(content, symbol)
+
+        log_var("column", column)
+
+        if not column then
+            goto continue
+        end
+
+        table.insert(results, {
+            filepath = filepath,
+            row = tonumber(row),
+            column = column,
+            content = content,
+        })
+        ::continue::
     end
     return results
 end
 
 local function jump_to_result(result)
     vim.cmd.edit(M.cwd .. result.filepath)
-    local column = string.find(result.content, _symbol) - 1
-    vim.api.nvim_win_set_cursor(0, { result.row, column })
+    vim.api.nvim_win_set_cursor(0, { result.row, result.column })
 end
 
 local function show_telescope_picker(results)
@@ -53,7 +73,7 @@ local function show_telescope_picker(results)
                     ordinal = entry.filepath .. ":" .. entry.row,
                     filename = M.cwd .. entry.filepath,
                     lnum = entry.row,
-                    col = (string.find(entry.content, _symbol) or 1) - 1,
+                    col = entry.col
                 }
             end,
         }),
