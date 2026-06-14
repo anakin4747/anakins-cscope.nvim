@@ -2,7 +2,7 @@
 local M = {}
 
 M.cwd = nil
-local _symbol
+M.symbol = nil
 
 M.logfile = "anakins-cscope.nvim.log"
 M.should_log = false
@@ -23,19 +23,18 @@ M.parse_results = function(stdout)
     for line in stdout:gmatch("[^\r\n]+") do
         log_var("line", line)
 
-        local filepath, symbol, row, content =
+        local filepath, _, row, content =
             string.match(line, "(%S+) (%S+) (%S+) (.*)")
 
         log_var("filepath", filepath)
-        log_var("symbol", symbol)
         log_var("row", tonumber(row))
         log_var("content", content)
 
-        if not (filepath and symbol and row and content) then
+        if not (filepath and row and content) then
             goto continue
         end
 
-        local column = string.find(content, symbol)
+        local column = string.find(content, M.symbol)
 
         log_var("column", column)
 
@@ -65,7 +64,7 @@ local function show_telescope_picker(results)
     local finders = require("telescope.finders")
 
     pickers.new({}, {
-        prompt_title = _symbol,
+        prompt_title = M.symbol,
         previewer = previewers.vim_buffer_qflist.new({}),
         finder = finders.new_table({
             results = results,
@@ -84,17 +83,17 @@ local function show_telescope_picker(results)
 end
 
 M.goto_definition = function(symbol)
-    _symbol = symbol or vim.fn.expand("<cword>")
+    M.symbol = symbol or vim.fn.expand("<cword>")
     local opts = { text = true, cwd = M.cwd }
 
-    local cmd = { "cscope", "-d", "-L", "-1", _symbol }
+    local cmd = { "cscope", "-d", "-L", "-1", M.symbol }
 
     vim.system(cmd, opts, function(result)
         vim.schedule(function()
             log_var("cmd", cmd)
             log_var("opts", opts)
             log_var("result", result)
-            log_var("symbol", _symbol)
+            log_var("symbol", M.symbol)
 
             local results = M.parse_results(result.stdout)
             if #results == 0 then return end

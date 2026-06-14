@@ -83,6 +83,7 @@ describe("anakins-cscope.parse_results", function()
     end)
 
     _it("parses single result from cscope stdout", function()
+        cs.symbol = 'regmap_reg_range'
         local stdout = "include/linux/regmap.h regmap_reg_range 234 #define regmap_reg_range(low, high) { .range_min = low, .range_max = high, }\n"
         local results = cs.parse_results(stdout)
         assert.equal(1, #results)
@@ -93,6 +94,7 @@ describe("anakins-cscope.parse_results", function()
     end)
 
     _it("parses multiple results for setup_arch", function()
+        cs.symbol = 'setup_arch'
         local stdout = "arch/arm/kernel/setup.c setup_arch 1096 void __init setup_arch(char **cmdline_p)\narch/x86/kernel/setup.c setup_arch 884 void __init setup_arch(char **cmdline_p)\n"
         local results = cs.parse_results(stdout)
         assert.equal(2, #results)
@@ -105,6 +107,7 @@ describe("anakins-cscope.parse_results", function()
     end)
 
     _it("skips lines that don't match the pattern", function()
+        cs.symbol = 'regmap_reg_range'
         local stdout = "short\ninclude/linux/regmap.h regmap_reg_range 234 #define regmap_reg_range(low, high) { .range_min = low, .range_max = high, }\n"
         local results = cs.parse_results(stdout)
         assert.equal(1, #results)
