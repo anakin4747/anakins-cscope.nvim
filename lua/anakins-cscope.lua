@@ -1,4 +1,16 @@
 
+local fields = {
+    symbol = "0",
+    definition = "1",
+    outgoing_calls = "2",
+    incoming_calls = "3",
+    text = "4",
+    rename = "5",
+    egrep = "6",
+    file = "7",
+    including_files = "8",
+}
+
 local M = {}
 
 M.cwd = nil
@@ -82,11 +94,11 @@ local function show_telescope_picker(results)
     }):find()
 end
 
-M.goto_definition = function(symbol)
+local function jump_or_list_cscope(field, symbol)
     M.symbol = symbol or vim.fn.expand("<cword>")
     local opts = { text = true, cwd = M.cwd }
 
-    local cmd = { "cscope", "-d", "-L", "-1", M.symbol }
+    local cmd = { "cscope", "-d", "-L", "-" .. field, M.symbol }
 
     vim.system(cmd, opts, function(result)
         vim.schedule(function()
@@ -107,44 +119,16 @@ M.goto_definition = function(symbol)
     end)
 end
 
+M.goto_definition = function(symbol)
+    jump_or_list_cscope(fields.definition, symbol)
+end
+
 M.goto_incoming_calls = function(symbol)
-    M.symbol = symbol or vim.fn.expand("<cword>")
-    local opts = { text = true, cwd = M.cwd }
-
-    local cmd = { "cscope", "-d", "-L", "-3", M.symbol }
-
-    vim.system(cmd, opts, function(result)
-        vim.schedule(function()
-            log_var("cmd", cmd)
-            log_var("opts", opts)
-            log_var("result", result)
-            log_var("symbol", M.symbol)
-
-            local results = M.parse_results(result.stdout)
-            if #results == 0 then return end
-
-            if #results == 1 then
-                jump_to_result(results[1])
-            else
-                show_telescope_picker(results)
-            end
-        end)
-    end)
+    jump_or_list_cscope(fields.incoming_calls, symbol)
 end
 
 M.should_log = true
 M.cwd = "./tests/fixtures/default/"
 M.goto_definition("setup_arch")
-
-
--- Find this C symbol:              <-- Field 0
--- Find this global definition:     <-- Field 1
--- Find functions called by this:   <-- Field 2 outgoing
--- Find functions calling this:     <-- Field 3 incomming
--- Find this text string:           <-- Field 4
--- Change this text string:         <-- Field 5 rename
--- Find this egrep pattern:         <-- Field 6
--- Find this file:                  <-- Field 7
--- Find files #including this file: <-- Field 8
 
 return M
