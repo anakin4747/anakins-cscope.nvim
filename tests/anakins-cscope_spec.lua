@@ -48,6 +48,24 @@ describe("anakins-cscope.goto_incoming_calls", function()
         assert.equal(2, #entries)
     end)
 
+    _it("selecting first do_one_initcall entry lands on init/main.c:1444", function()
+        cs.goto_incoming_calls('do_one_initcall')
+        vim.wait(100)
+
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        assert.is_true(#prompts > 0, "telescope should have an active picker")
+
+        require("telescope.actions").select_default(prompts[1])
+        vim.wait(100)
+
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("init/main.c", name)
+
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        assert.equal(1444, row)
+        assert.equal(1, col)
+    end)
+
     _it("jumps from cursor on rest_init definition", function()
         vim.cmd.edit(cs.cwd .. "init/main.c")
         vim.api.nvim_win_set_cursor(0, { 714, 38 })
