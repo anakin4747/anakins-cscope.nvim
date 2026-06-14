@@ -88,6 +88,76 @@ describe("anakins-cscope.goto_incoming_calls", function()
     end)
 end)
 
+describe("anakins-cscope.goto_outgoing_calls", function()
+    _it("can be called without errors", function()
+        assert.has_no.errors(function()
+            cs.goto_outgoing_calls()
+        end)
+    end)
+
+    _it("accepts a symbol as an argument", function()
+        assert.has_no.errors(function()
+            cs.goto_outgoing_calls('do_trace_initcall_level')
+        end)
+    end)
+
+    _it("opens init/main.c when passed do_trace_initcall_level", function()
+        cs.goto_outgoing_calls('do_trace_initcall_level')
+        vim.wait(100)
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("init/main.c", name)
+    end)
+
+    _it("goes to init/main.c:1368 when passed do_trace_initcall_level", function()
+        cs.goto_outgoing_calls('do_trace_initcall_level')
+        vim.wait(100)
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        assert.equal(1368, row, "wrong row")
+        assert.equal(1, col, "wrong column")
+    end)
+
+    _it("opens telescope picker with 2 results for try_to_run_init_process", function()
+        cs.goto_outgoing_calls('try_to_run_init_process')
+        vim.wait(100)
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        assert.is_true(#prompts > 0, "telescope should have an active picker")
+
+        local picker = require("telescope.actions.state").get_current_picker(prompts[1])
+        local entries = picker.finder.results
+        assert.equal(2, #entries)
+    end)
+
+    _it("selecting first try_to_run_init_process entry lands on init/main.c:1510", function()
+        cs.goto_outgoing_calls('try_to_run_init_process')
+        vim.wait(100)
+
+        local prompts = require("telescope.state").get_existing_prompt_bufnrs()
+        assert.is_true(#prompts > 0, "telescope should have an active picker")
+
+        require("telescope.actions").select_default(prompts[1])
+        vim.wait(100)
+
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("init/main.c", name)
+
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        assert.equal(1510, row)
+        assert.equal(7, col)
+    end)
+
+    _it("does nothing for parse_args which has no outgoing calls", function()
+        local before = #require("telescope.state").get_existing_prompt_bufnrs()
+        vim.cmd.new()
+        cs.goto_outgoing_calls('parse_args')
+        vim.wait(100)
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.equal("", name, "should not open any file")
+
+        local after = #require("telescope.state").get_existing_prompt_bufnrs()
+        assert.equal(before, after, "telescope count should not change")
+    end)
+end)
+
 describe("anakins-cscope.goto_definition", function()
     _it("can be called without errors", function()
         assert.has_no.errors(function()

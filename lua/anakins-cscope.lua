@@ -35,7 +35,7 @@ M.parse_results = function(stdout)
     for line in stdout:gmatch("[^\r\n]+") do
         log_var("line", line)
 
-        local filepath, _, row, content =
+        local filepath, called_symbol, row, content =
             string.match(line, "(%S+) (%S+) (%S+) (.*)")
 
         log_var("filepath", filepath)
@@ -47,6 +47,10 @@ M.parse_results = function(stdout)
         end
 
         local column = string.find(content, M.symbol)
+
+        if not column then
+            column = string.find(content, called_symbol)
+        end
 
         log_var("column", column)
 
@@ -125,6 +129,10 @@ end
 
 M.goto_incoming_calls = function(symbol)
     jump_or_list_cscope(fields.incoming_calls, symbol)
+end
+
+M.goto_outgoing_calls = function(symbol)
+    jump_or_list_cscope(fields.outgoing_calls, symbol)
 end
 
 M.should_log = true
