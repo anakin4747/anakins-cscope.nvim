@@ -135,4 +135,8 @@ M.goto_outgoing_calls = function(symbol)
     jump_or_list_cscope(fields.outgoing_calls, symbol)
 end
 
+M.goto_rename = function(symbol)
+    jump_or_list_cscope(fields.rename, symbol)
+end
+
 return M
