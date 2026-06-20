@@ -41,13 +41,13 @@ local ac = require('anakins-cscope')
 ac.goto_definition()
 ac.goto_incoming_calls()
 ac.goto_outgoing_calls()
-ac.rename()
+ac.references()
 
 -- explicit symbol
 ac.goto_definition('setup_arch')
 ac.goto_incoming_calls('setup_arch')
 ac.goto_outgoing_calls('setup_arch')
-ac.rename('setup_arch')
+ac.references('setup_arch')
 ```
 
 Also take a look at `tests/dev/init.lua` used in the demo.
@@ -122,13 +122,13 @@ SUCCESS anakins-cscope.goto_outgoing_calls opens telescope picker with 2 results
 SUCCESS anakins-cscope.goto_outgoing_calls selecting first try_to_run_init_process entry lands on init/main.c:1510
 SUCCESS anakins-cscope.goto_outgoing_calls jumps from cursor on do_trace_initcall_level definition
 SUCCESS anakins-cscope.goto_outgoing_calls does nothing for parse_args which has no outgoing calls
-SUCCESS anakins-cscope.rename can be called without errors
-SUCCESS anakins-cscope.rename accepts a symbol as an argument
-SUCCESS anakins-cscope.rename opens init/main.c when passed add_latent_entropy
-SUCCESS anakins-cscope.rename goes to init/main.c:1397 when passed add_latent_entropy
-SUCCESS anakins-cscope.rename opens telescope picker with 5 results for try_to_run_init_process
-SUCCESS anakins-cscope.rename selecting first try_to_run_init_process entry lands on init/main.c:1506
-SUCCESS anakins-cscope.rename does nothing for nonexistent_symbol_xyz which has no results
+SUCCESS anakins-cscope.references can be called without errors
+SUCCESS anakins-cscope.references accepts a symbol as an argument
+SUCCESS anakins-cscope.references opens init/main.c when passed add_latent_entropy
+SUCCESS anakins-cscope.references goes to init/main.c:1397 when passed add_latent_entropy
+SUCCESS anakins-cscope.references opens telescope picker with 5 results for try_to_run_init_process
+SUCCESS anakins-cscope.references selecting first try_to_run_init_process entry lands on init/main.c:1506
+SUCCESS anakins-cscope.references does nothing for nonexistent_symbol_xyz which has no results
 SUCCESS anakins-cscope.goto_definition can be called without errors
 SUCCESS anakins-cscope.goto_definition accepts a symbol as an argument
 SUCCESS anakins-cscope.goto_definition opens include/linux/regmap.h when passed regmap_reg_range

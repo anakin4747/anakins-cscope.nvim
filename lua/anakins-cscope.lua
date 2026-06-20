@@ -1,11 +1,11 @@
 
 local fields = {
-    symbol = "0",
+    references = "0",
     definition = "1",
     outgoing_calls = "2",
     incoming_calls = "3",
     text = "4",
-    rename = "5",
+    rename = "0",
     egrep = "6",
     file = "7",
     including_files = "8",
@@ -137,8 +137,8 @@ M.goto_outgoing_calls = function(symbol)
     jump_or_list_cscope(fields.outgoing_calls, symbol)
 end
 
-M.rename = function(symbol)
-    jump_or_list_cscope(fields.rename, symbol)
+M.references = function(symbol)
+    jump_or_list_cscope(fields.references, symbol)
 end
 
 return M
