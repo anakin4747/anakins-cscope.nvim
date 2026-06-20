@@ -50,6 +50,8 @@ ac.goto_outgoing_calls('setup_arch')
 ac.rename('setup_arch')
 ```
 
+Also take a look at `tests/dev/init.lua` used in the demo.
+
 # demo
 
 Run `make demo` to try it out in a container. Note that this only works for
