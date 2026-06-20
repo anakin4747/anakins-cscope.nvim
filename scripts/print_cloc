@@ -2,7 +2,7 @@
 
 cloc plugin lua |
     awk ' \
-        BEGIN      { print  "cloc:" } \
+        BEGIN      { print  "\ncloc:" } \
         /Language/ { printf " app:   \t%s\t%s\t%s\t%s\n", $2, $3, $4, $5 } \
         /Lua/      { printf "  lua   \t%s\t%s\t%s\t%s\n", $2, $3, $4, $5 } \
     '
@@ -11,4 +11,5 @@ cloc tests |
     awk ' \
         /Language/ { print  " tests:" } \
         /Lua/      { printf "  lua   \t%s\t%s\t%s\t%s\n", $2, $3, $4, $5 } \
+        END        { printf "\n" } \
     '
