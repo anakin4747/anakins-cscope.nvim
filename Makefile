@@ -3,7 +3,7 @@
 cqfd:
 	@git submodule update --init > /dev/null
 	@./scripts/cqfd/cqfd init > /dev/null
-	@./scripts/cqfd/cqfd run make cloc tests
+	@./scripts/cqfd/cqfd run make cloc tests | grep -v '^Cscope logging'
 
 .PHONY: dev
 dev:

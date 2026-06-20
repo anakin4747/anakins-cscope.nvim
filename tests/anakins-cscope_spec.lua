@@ -512,6 +512,37 @@ describe("anakins-cscope.parse_results", function()
     end)
 end)
 
+describe("anakins-cscope.toggle_logging", function()
+    after_each(function()
+        cs.should_log = false
+        pcall(vim.cmd, 'redir END')
+    end)
+
+    it("sets should_log to true when toggled from disabled", function()
+        cs.should_log = false
+        cs.toggle_logging()
+        assert.is_true(cs.should_log)
+    end)
+
+    it("sets should_log to false when toggled from enabled", function()
+        cs.should_log = true
+        cs.toggle_logging()
+        assert.is_false(cs.should_log)
+    end)
+
+    it("CscopeLogToggle does not error when called as a command", function()
+        assert.has_no.errors(function()
+            vim.cmd('CscopeLogToggle')
+        end)
+    end)
+
+    it("toggles should_log through the command", function()
+        cs.should_log = false
+        vim.cmd('CscopeLogToggle')
+        assert.is_true(cs.should_log)
+    end)
+end)
+
 describe("anakins-cscope.cwd_is_nil", function()
     _it("errors when cwd is nil and single result is jumped to", function()
         local orig_cwd = cs.cwd

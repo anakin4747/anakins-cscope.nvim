@@ -29,6 +29,17 @@ local function log_var(name, var)
     log(name .. ": '" .. vim.inspect(var) .. "'")
 end
 
+M.toggle_logging = function()
+    M.should_log = not M.should_log
+    if M.should_log then
+        vim.cmd('redir! >> ' .. M.logfile)
+        vim.api.nvim_echo({ { 'Cscope logging enabled to ' .. M.logfile, 'None' } }, false, {})
+    else
+        pcall(vim.cmd, 'redir END')
+        vim.api.nvim_echo({ { 'Cscope logging disabled', 'None' } }, false, {})
+    end
+end
+
 M.parse_results = function(stdout)
     if not stdout or stdout == "" then return {} end
     local results = {}
