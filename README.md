@@ -46,6 +46,11 @@ ac.goto_outgoing_calls('setup_arch')
 ac.rename('setup_arch')
 ```
 
+# demo
+
+Run `make demo` to try it out in a container. Note that this only works for
+symbols used in the test fixtures.
+
 # TDD as always
 
 To run the tests for this application always just run `make` without arguments.
