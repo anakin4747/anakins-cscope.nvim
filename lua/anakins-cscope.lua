@@ -70,7 +70,8 @@ M.parse_results = function(stdout)
 end
 
 local function jump_to_result(result)
-    vim.cmd.edit(M.cwd .. result.filepath)
+    local cwd = M.cwd or vim.fn.getcwd()
+    vim.cmd.edit(cwd .. "/" .. result.filepath)
     vim.api.nvim_win_set_cursor(0, { result.row, result.column })
 end
 
@@ -85,11 +86,12 @@ local function show_telescope_picker(results)
         finder = finders.new_table({
             results = results,
             entry_maker = function(entry)
+                local cwd = M.cwd or vim.fn.getcwd()
                 return {
                     value = entry,
                     display = entry.filepath .. ":" .. entry.row .. ": " .. (entry.content or ""),
                     ordinal = entry.filepath .. ":" .. entry.row,
-                    filename = M.cwd .. entry.filepath,
+                    filename = cwd .. "/" .. entry.filepath,
                     lnum = entry.row,
                     col = entry.column
                 }

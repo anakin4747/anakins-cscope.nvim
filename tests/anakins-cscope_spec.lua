@@ -420,3 +420,23 @@ describe("anakins-cscope.parse_results", function()
     end)
 end)
 
+describe("anakins-cscope.cwd_is_nil", function()
+    _it("errors when cwd is nil and single result is jumped to", function()
+        local orig_cwd = cs.cwd
+        cs.cwd = nil
+        local orig_dir = vim.fn.getcwd()
+        vim.cmd('cd tests/fixtures/default/')
+
+        cs.goto_definition('regmap_reg_range')
+        vim.wait(200)
+
+        local name = vim.api.nvim_buf_get_name(0)
+        assert.matches("include/linux/regmap.h", name)
+
+        vim.cmd('cd ' .. orig_dir)
+        cs.cwd = orig_cwd
+    end)
+end)
+
+
+
