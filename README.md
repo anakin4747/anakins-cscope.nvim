@@ -61,3 +61,7 @@ symbols used in the test fixtures.
 
 To run the tests for this application always just run `make` without arguments.
 
+# todos
+
+- add support for all visual modes
+- skip waits in tests
