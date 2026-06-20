@@ -3,6 +3,8 @@ local cs = require("anakins-cscope")
 
 cs.cwd = 'tests/fixtures/default/'
 
+vim.fn.mkdir(vim.fn.getcwd() .. "/tests/logs", "p")
+
 local delay = 75
 
 local function _it(text, fn)
