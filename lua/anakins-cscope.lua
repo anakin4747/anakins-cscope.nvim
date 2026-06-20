@@ -46,10 +46,10 @@ M.parse_results = function(stdout)
             goto continue
         end
 
-        local column = string.find(content, M.symbol)
+        local column = string.find(content, vim.pesc(M.symbol))
 
         if not column then
-            column = string.find(content, called_symbol)
+            column = string.find(content, vim.pesc(called_symbol))
         end
 
         log_var("column", column)
@@ -100,8 +100,29 @@ local function show_telescope_picker(results)
     }):find()
 end
 
+local function get_visual_selection()
+    local start_pos = vim.fn.getpos("'<")
+    local end_pos = vim.fn.getpos("'>")
+    local srow, scol = start_pos[2], start_pos[3]
+    local erow, ecol = end_pos[2], end_pos[3]
+    if srow == 0 or erow == 0 then return nil end
+
+    if srow == erow then
+        return string.sub(vim.fn.getline(srow), scol, ecol)
+    end
+    local lines = vim.fn.getline(srow, erow)
+    lines[1] = string.sub(lines[1], scol)
+    lines[#lines] = string.sub(lines[#lines], 1, ecol)
+    return table.concat(lines, "\n")
+end
+
 local function jump_or_list_cscope(field, symbol)
-    M.symbol = symbol or vim.fn.expand("<cword>")
+    if not symbol then
+        symbol = get_visual_selection() or vim.fn.expand("<cword>")
+    end
+    pcall(vim.api.nvim_buf_del_mark, 0, '<')
+    pcall(vim.api.nvim_buf_del_mark, 0, '>')
+    M.symbol = symbol
     local opts = { text = true, cwd = M.cwd }
 
     local cmd = { "cscope", "-d", "-L", "-" .. field, M.symbol }

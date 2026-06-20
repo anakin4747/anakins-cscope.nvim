@@ -59,7 +59,6 @@ symbols used in the test fixtures.
 
 # todos
 
-- add support for all visual modes
 - skip waits in tests
 
 # TDD as always
