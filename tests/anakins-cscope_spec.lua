@@ -5,7 +5,7 @@ cs.cwd = 'tests/fixtures/default/'
 
 vim.fn.mkdir(vim.fn.getcwd() .. "/tests/logs", "p")
 
-local delay = 75
+local delay = 100
 
 local function _it(text, fn)
     cs.logfile = vim.fn.getcwd() .. "/tests/logs/" .. string.gsub(text, "[%s/:']", "-") .. ".log"
