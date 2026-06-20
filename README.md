@@ -27,6 +27,10 @@ Build the cscope database for your repo, with a command such as:
 ```sh
 cscope -bqkvR
 ```
+or for the Linux kernel:
+```sh
+make cscope
+```
 
 Then hook these into your own logic or your own keymaps:
 
