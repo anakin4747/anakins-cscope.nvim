@@ -4,7 +4,7 @@ local cs = require("anakins-cscope")
 cs.cwd = 'tests/fixtures/default/'
 
 local function _it(text, fn)
-    cs.logfile = "tests/logs/" .. string.gsub(text, "[%s/:']", "-") .. ".log"
+    cs.logfile = vim.fn.getcwd() .. "/tests/logs/" .. string.gsub(text, "[%s/:']", "-") .. ".log"
     cs.should_log = true
     it(text, fn)
 end
