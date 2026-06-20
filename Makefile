@@ -3,7 +3,7 @@
 cqfd:
 	@git submodule update --init > /dev/null
 	@./scripts/cqfd/cqfd init > /dev/null
-	@./scripts/cqfd/cqfd run make tests
+	@./scripts/cqfd/cqfd run make cloc tests
 
 .PHONY: dev
 dev:
@@ -15,4 +15,7 @@ dev:
 test tests:
 	@cog check --from-latest-tag
 	@./scripts/run_tests
+
+.PHONY: cloc
+cloc:
 	@./scripts/print_cloc
